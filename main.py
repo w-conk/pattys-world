@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+import time
 from player import Player
 from objects import Barf, Cockroach, Splat
 
@@ -25,9 +26,17 @@ clock = pygame.time.Clock()
 # Load sound effects
 try:
     splat_sound = pygame.mixer.Sound("assets/splat.wav")
-except:
-    print("Warning: Could not load splat sound. Make sure 'assets/splat.wav' exists.")
+    
+    # Load player sounds - add your sound files to assets folder
+    player_sounds = [
+        pygame.mixer.Sound("assets/player_sound1.wav"),
+        pygame.mixer.Sound("assets/player_sound2.wav"),
+        pygame.mixer.Sound("assets/player_sound3.wav")
+    ]
+except Exception as e:
+    print(f"Warning: Could not load sounds. Error: {e}")
     splat_sound = None
+    player_sounds = []
 
 class Game:
     def __init__(self):
@@ -41,6 +50,10 @@ class Game:
         self.score = 0
         self.splats = []  # List to store Splat objects
         self.running = True
+        
+        # Sound timer variables
+        self.last_sound_time = time.time()
+        self.next_sound_delay = random.uniform(5, 15)  # Random time between 5-15 seconds
     
     def check_collision(self, rect1, rect2):
         # Use Pygame's built-in collision detection
@@ -68,6 +81,17 @@ class Game:
         # Increment score
         self.score += 1
     
+    def play_random_player_sound(self):
+        # Check if we have any player sounds loaded
+        if player_sounds:
+            # Choose a random sound from the list
+            random_sound = random.choice(player_sounds)
+            random_sound.play()
+            
+            # Set a new random delay for the next sound
+            self.next_sound_delay = random.uniform(5, 15)  # Random time between 5-15 seconds
+            self.last_sound_time = time.time()
+    
     def handle_events(self):
         # Process input events
         for event in pygame.event.get():
@@ -78,6 +102,11 @@ class Game:
                     self.running = False
     
     def update(self):
+        # Check if it's time to play a random player sound
+        current_time = time.time()
+        if current_time - self.last_sound_time > self.next_sound_delay:
+            self.play_random_player_sound()
+        
         # Handle keyboard input for player movement
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
