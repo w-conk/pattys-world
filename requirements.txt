@@ -1,0 +1,6 @@
+# Core dependency
+pygame>=2.1.0,<3.0.0
+
+# Optional - uncomment if you use these in your project
+# numpy>=1.20.0  # If you use any math/physics calculations
+# pillow>=9.0.0  # If you need additional image processing 
