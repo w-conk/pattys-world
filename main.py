@@ -9,12 +9,16 @@ pygame.init()
 pygame.mixer.init()  # For sound effects
 
 # Constants
-SCREEN_WIDTH = 200
-SCREEN_HEIGHT = 200
+GAME_WIDTH = 200  # Original game dimensions
+GAME_HEIGHT = 200
+SCALE_FACTOR = 3  # How much to scale up by
+SCREEN_WIDTH = GAME_WIDTH * SCALE_FACTOR
+SCREEN_HEIGHT = GAME_HEIGHT * SCALE_FACTOR
 FPS = 60
 
 # Set up the display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+game_surface = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
 pygame.display.set_caption("Patty's World")
 clock = pygame.time.Clock()
 
@@ -30,8 +34,8 @@ class Game:
         self.player = Player()
         
         # Random starting position for cockroach
-        random_x = random.randint(0, SCREEN_WIDTH - 16)
-        random_y = random.randint(0, SCREEN_HEIGHT - 16)
+        random_x = random.randint(0, GAME_WIDTH - 16)
+        random_y = random.randint(0, GAME_HEIGHT - 16)
         self.cockroach = Cockroach(random_x, random_y, scale=1)
         
         self.score = 0
@@ -55,8 +59,8 @@ class Game:
             splat_sound.play()
         
         # Move cockroach to new position
-        new_x = random.randint(0, SCREEN_WIDTH - self.cockroach.width)
-        new_y = random.randint(0, SCREEN_HEIGHT - self.cockroach.height)
+        new_x = random.randint(0, GAME_WIDTH - self.cockroach.width)
+        new_y = random.randint(0, GAME_HEIGHT - self.cockroach.height)
         self.cockroach.x = new_x
         self.cockroach.y = new_y
         self.cockroach.update()  # Update the rect
@@ -83,7 +87,7 @@ class Game:
         elif keys[pygame.K_RIGHT]:
             self.player.move_right()
             # Keep player in bounds
-            self.player.x = min(SCREEN_WIDTH - self.player.width, self.player.x)
+            self.player.x = min(GAME_WIDTH - self.player.width, self.player.x)
         elif keys[pygame.K_UP]:
             self.player.move_up()
             # Keep player in bounds
@@ -91,15 +95,15 @@ class Game:
         elif keys[pygame.K_DOWN]:
             self.player.move_down()
             # Keep player in bounds
-            self.player.y = min(SCREEN_HEIGHT - self.player.height, self.player.y)
+            self.player.y = min(GAME_HEIGHT - self.player.height, self.player.y)
         
         # Random cockroach movement
         self.cockroach.x += random.randint(-2, 2)
         self.cockroach.y += random.randint(-2, 2)
         
         # Keep cockroach within screen bounds
-        self.cockroach.x = max(0, min(self.cockroach.x, SCREEN_WIDTH - self.cockroach.width))
-        self.cockroach.y = max(0, min(self.cockroach.y, SCREEN_HEIGHT - self.cockroach.height))
+        self.cockroach.x = max(0, min(self.cockroach.x, GAME_WIDTH - self.cockroach.width))
+        self.cockroach.y = max(0, min(self.cockroach.y, GAME_HEIGHT - self.cockroach.height))
         self.cockroach.update()  # Update the rect
         
         # Check for collision between player and cockroach
@@ -107,23 +111,24 @@ class Game:
             self.respawn_cockroach()
     
     def draw(self):
-        # Clear the screen
-        screen.fill((0, 0, 0))  # Black background
+        # Clear the game surface (not the screen)
+        game_surface.fill((0, 0, 0))
         
-        # Draw all splats first
+        # Draw everything to the game surface
         for splat in self.splats:
-            splat.draw(screen)
+            splat.draw(game_surface)
         
-        # Draw cockroach
-        self.cockroach.draw(screen)
-        
-        # Draw player
-        self.player.draw(screen)
+        self.cockroach.draw(game_surface)
+        self.player.draw(game_surface)
         
         # Draw score
         font = pygame.font.SysFont(None, 24)
         score_text = font.render(f"Score: {self.score}", True, (255, 255, 255))
-        screen.blit(score_text, (5, 5))
+        game_surface.blit(score_text, (5, 5))
+        
+        # Scale the game surface up to the screen
+        scaled_surface = pygame.transform.scale(game_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        screen.blit(scaled_surface, (0, 0))
         
         # Update the display
         pygame.display.flip()
