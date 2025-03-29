@@ -121,14 +121,14 @@ class Game:
         self.cockroach.draw(game_surface)
         self.player.draw(game_surface)
         
-        # Draw score
-        font = pygame.font.SysFont(None, 24)
-        score_text = font.render(f"Score: {self.score}", True, (255, 255, 255))
-        game_surface.blit(score_text, (5, 5))
-        
         # Scale the game surface up to the screen
         scaled_surface = pygame.transform.scale(game_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
         screen.blit(scaled_surface, (0, 0))
+        
+        # Draw score directly to the screen (not the game surface)
+        font = pygame.font.SysFont(None, 24)  # Larger font for screen
+        score_text = font.render(f"Score: {self.score}", True, (255, 255, 255))
+        screen.blit(score_text, (15, 15))  # Position adjusted for scaled screen
         
         # Update the display
         pygame.display.flip()
