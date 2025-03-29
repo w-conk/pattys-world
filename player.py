@@ -3,7 +3,7 @@ import pygame
 class Player:
     def __init__(self):
         # Load the player sprite
-        self.image = pygame.image.load("assets/player.png").convert_alpha()
+        self.image = pygame.image.load("assets/patty.png").convert_alpha()
         self.width = 16
         self.height = 16
         

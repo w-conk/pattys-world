@@ -4,7 +4,7 @@ import random
 class Barf:
     def __init__(self):
         # Load the barf sprite
-        self.image = pygame.image.load("assets/barf.png").convert_alpha()
+        self.image = pygame.image.load("assets/patty.png").convert_alpha()
         self.width = 6
         self.height = 6
         self.x = 0
@@ -23,7 +23,7 @@ class Barf:
 class Cockroach:
     def __init__(self, x, y, scale=0.5):
         # Load the cockroach sprite
-        self.original_image = pygame.image.load("assets/cockroach.png").convert_alpha()
+        self.original_image = pygame.image.load("assets/patty.png").convert_alpha()
         self.scale = scale
         
         # Scale the image
@@ -59,7 +59,7 @@ class Cockroach:
 class Splat:
     def __init__(self):
         # Load the splat sprite
-        self.image = pygame.image.load("assets/splat.png").convert_alpha()
+        self.image = pygame.image.load("assets/patty.png").convert_alpha()
         self.width = 16
         self.height = 16
         self.x = 0
